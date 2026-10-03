@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Face Tracker</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+        <path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="12" cy="11" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M7.5 17.5c1-2 2.7-3 4.5-3s3.5 1 4.5 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>Face Tracker</span>
+    </div>
+    <div class="model-chip" id="modelChip">Loading model info…</div>
+  </header>
+
+  <main class="layout">
+    <section class="viewer">
+      <div class="tabs" role="tablist">
+        <button role="tab" class="tab active" data-mode="camera" aria-selected="true">Live camera</button>
+        <button role="tab" class="tab" data-mode="image" aria-selected="false">Image</button>
+      </div>
+
+      <div class="stage" id="stage">
+        <canvas id="display"></canvas>
+        <video id="video" playsinline muted hidden></video>
+
+        <div class="placeholder" id="cameraPlaceholder">
+          <p>Start the camera to begin detecting faces in real time.</p>
+          <button class="btn primary" id="startBtnInline">Start camera</button>
+        </div>
+
+        <label class="dropzone" id="dropzone" hidden>
+          <input type="file" id="fileInput" accept="image/*" hidden>
+          <svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p><strong>Drop an image here</strong> or click to choose one</p>
+          <p class="muted small">JPEG, PNG or WebP</p>
+        </label>
+
+        <div class="status-pill" id="statusPill" hidden></div>
+      </div>
+
+      <div class="toolbar" id="cameraToolbar">
+        <button class="btn primary" id="startBtn">Start camera</button>
+        <select id="cameraSelect" class="select" aria-label="Camera" disabled>
+          <option>Default camera</option>
+        </select>
+        <span class="spacer"></span>
+        <button class="btn" id="snapshotBtn" disabled>Snapshot</button>
+      </div>
+      <div class="toolbar" id="imageToolbar" hidden>
+        <button class="btn" id="chooseBtn">Choose image</button>
+        <span class="muted small" id="imageName"></span>
+        <span class="spacer"></span>
+        <button class="btn" id="saveImageBtn" disabled>Save result</button>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="card">
+        <div class="card-head">
+          <h2>Detection</h2>
+          <span class="badge" id="faceBadge">Idle</span>
+        </div>
+        <div class="confidence">
+          <div class="confidence-value"><span id="confValue">–</span><small>confidence</small></div>
+          <div class="meter"><div class="meter-fill" id="confFill"></div><div class="meter-mark" id="confMark"></div></div>
+        </div>
+        <canvas id="spark" class="spark" height="56" aria-label="Confidence over time"></canvas>
+      </div>
+
+      <div class="card">
+        <h2>Performance</h2>
+        <dl class="stats">
+          <div><dt>Frame rate</dt><dd><span id="statFps">–</span><small>fps</small></dd></div>
+          <div><dt>Round trip</dt><dd><span id="statRtt">–</span><small>ms</small></dd></div>
+          <div><dt>Model</dt><dd><span id="statInfer">–</span><small>ms</small></dd></div>
+          <div><dt>Box</dt><dd class="mono small" id="statBox">–</dd></div>
+        </dl>
+      </div>
+
+      <div class="card">
+        <h2>Settings</h2>
+        <div class="field">
+          <label for="threshold">Detection threshold <output id="thresholdOut">0.50</output></label>
+          <input type="range" id="threshold" min="0.05" max="0.95" step="0.05" value="0.5">
+        </div>
+        <label class="switch"><input type="checkbox" id="squareCrop" checked><span>Center-crop to square</span></label>
+        <p class="hint">The model was trained on square 450×450 crops. Cropping keeps faces from being stretched.</p>
+        <label class="switch"><input type="checkbox" id="mirror" checked><span>Mirror camera preview</span></label>
+        <label class="switch"><input type="checkbox" id="smooth" checked><span>Smooth box motion</span></label>
+        <label class="switch"><input type="checkbox" id="showZone" checked><span>Show detection zone</span></label>
+      </div>
+    </aside>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -7,3 +7,5 @@
 /share
 new-workspace.jupyterlab-workspace
 pyvenv.cfg
+.venv/
+__pycache__/
