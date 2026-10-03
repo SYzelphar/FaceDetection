@@ -56,6 +56,16 @@ def detect(image_bytes: bytes) -> dict:
 
 
 app = FastAPI(title="Face Tracker")
+
+
+@app.middleware("http")
+async def no_cache(request, call_next):
+    # Always revalidate, so edits (or another app on the same port) never serve stale files.
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-cache"
+    return response
+
+
 app.mount("/static", StaticFiles(directory=ROOT / "static"), name="static")
 
 
